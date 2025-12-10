@@ -1,11 +1,5 @@
 M$ModelName = "electron-proton-axion";
 
-M$Information = {
-  Authors      -> {"Hai-Qing Zhou"},
-  Version      -> "1.0.0",
-  Date         -> "2025-06-10"
-};
-
 FeynmanGauge = True; 
 
 
@@ -227,3 +221,4 @@ Lag = Leea + Lppa1 + Lppa2 + Lppax + Laxaa + Lpprho1 + Lpprho2 + Lrhoaxa + Lppom
 M$Lagrangians = {Lag};
 
 (* End of model *)
+
