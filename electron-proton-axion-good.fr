@@ -1,0 +1,229 @@
+M$ModelName = "electron-proton-axion";
+
+M$Information = {
+  Authors      -> {"Hai-Qing Zhou"},
+  Version      -> "1.0.0",
+  Date         -> "2025-06-10"
+};
+
+FeynmanGauge = True; 
+
+
+(* ************************** *)
+(* **** Particle classes **** *)
+(* ************************** *)
+M$ClassesDescription = {
+
+  V[1] == {
+    ClassName       -> A,
+    SelfConjugate   -> True,
+    Mass            -> {mphoton,0},
+    Width           -> 0,
+    ParticleName    -> "photon",
+    PDG             -> 922,
+    PropagatorLabel -> "a",
+    PropagatorType  -> A, 
+    PropagatorArrow -> None,
+    FullName        -> "Photon"
+  },
+
+  V[2] == {
+    ClassName       -> rho,
+    SelfConjugate   -> True,
+    Mass            -> {mrho,0.770},
+    Width           -> 0,
+    ParticleName    -> "rho",
+    PDG             -> 923,
+    PropagatorLabel -> "a",
+    PropagatorType  -> W, 
+    PropagatorArrow -> None,
+    FullName        -> "Rho"
+  },
+
+  V[3] == {
+    ClassName       -> omega,
+    SelfConjugate   -> True,
+    Mass            -> {momega,0.783},
+    Width           -> 0,
+    ParticleName    -> "omega",
+    PDG             -> 924,
+    PropagatorLabel -> "a",
+    PropagatorType  -> W, 
+    PropagatorArrow -> None,
+    FullName        -> "Omega"
+  },
+
+  F[1] == {
+    ClassName        -> e,
+    SelfConjugate    -> False,
+    Mass             -> {me, 5.11*^-4},
+    Width            -> 0,
+    PropagatorLabel  -> "e",
+    PropagatorType   -> Dirac, 
+    PropagatorArrow  -> Forward,
+    PDG              -> 911,
+    ParticleName     -> "e-",
+    AntiParticleName -> "e+",
+    FullName         -> "Electron"
+  },
+
+    F[2] == {
+    ClassName        -> p,
+    SelfConjugate    -> False,
+    Mass             -> {mp, 0.938},
+    Width            -> 0,
+    PropagatorLabel  -> "p",
+    PropagatorType   -> Dirac, 
+    PropagatorArrow  -> Forward,
+    PDG              -> 913,
+    ParticleName     -> "p",
+    AntiParticleName -> "pbar",
+    FullName         -> "Ptoron"
+  },
+  
+  S[1] == {
+    ClassName       -> ax,
+    SelfConjugate   -> True,
+    Mass            -> {maxion,1.0*10^-6},
+    Width           -> 0,
+    PropagatorLabel -> "axion",
+    PropagatorType  -> Scalar, 
+    PropagatorArrow -> None,
+    PDG             -> 901,
+    ParticleName    -> "ax",
+    FullName        -> "Axion"
+  }
+};
+
+
+(* ************************** *)
+(* ***** Parameters    ***** *)
+(* ************************** *)
+
+M$Parameters = {
+
+    ee == {
+        ParameterType    -> External,
+        Value            -> Sqrt[4.0*Pi*1.0/137.0],
+        InteractionOrder -> {qed, 1}, 
+        TeX              -> "ee photon electron electron",
+        Description      -> "Electric coupling constant"
+    },
+
+    f1 == {
+        ParameterType    -> External,
+        Value            -> 1,
+        InteractionOrder -> {qed,0}, 
+        TeX              -> "f1 photon proton proton",
+        Description      -> "f1 coupling constant"
+    },
+
+    f2 == {
+        ParameterType    -> External,
+        Value            -> 1.793,
+        InteractionOrder -> {qed, 0}, 
+        TeX              -> "f2 photon proton proton",
+        Description      -> "f2 coupling constant"
+    },
+
+    gaxpp == {
+        ParameterType    -> External,
+        Value            -> 0.215,
+        InteractionOrder -> {order1, 1}, 
+        TeX              -> "g axion proton proton",
+        Description      -> "axpp coupling constant"
+    },
+
+    gaxaa == {
+        ParameterType    -> External,
+        Value            -> 0.005588,
+        InteractionOrder -> {order1, 1}, 
+        TeX              -> "g axion photon photon",
+        Description      -> "axaa coupling constant"
+    },
+
+    grhopp1 == {
+        ParameterType    -> External,
+        Value            -> 3.25,
+        InteractionOrder -> {order1, 1}, 
+        TeX              -> "g axion proton proton 1",
+        Description      -> "rhopp1 coupling constant"
+    },
+
+    grhopp2 == {
+        ParameterType    -> External,
+        Value            -> -10.6,
+        InteractionOrder -> {order1, 1}, 
+        TeX              -> "g rho proton proton 2",
+        Description      -> "rhopp2 coupling constant"
+    }, 
+
+
+    grhoaxa == {
+        ParameterType    -> External,
+        Value            -> -0.098,
+        InteractionOrder -> {order1, 1}, 
+        TeX              -> "g rho axion photon",
+        Description      -> "rho ax a coupling constant"
+    },
+
+  gomegapp == {
+        ParameterType    -> External,
+        Value            -> 11.7,
+        InteractionOrder -> {order2, 1}, 
+        TeX              -> "g omega proton proton",
+        Description      -> "omega p p coupling constant"
+    },
+
+    gomegaaxa == {
+        ParameterType    -> External,
+        Value            -> -0.066,
+        InteractionOrder -> {order1, 1}, 
+        TeX              -> "g omega axion photon",
+        Description      -> "omega ax a coupling constant"
+    }
+};
+
+
+(* ************************** *)
+(* ***** Lagrangian    ***** *)
+(* ************************** *)
+
+FA[mu_,nu_] := del[A[mu], nu] - del[A[nu], mu];
+
+Frho[mu_,nu_] := del[rho[mu], nu] - del[rho[nu], mu];
+
+Fomega[mu_,nu_] := del[omega[mu], nu] - del[omega[nu], mu];
+
+
+sigma[mu_,nu_]:= 1/2*I*(Ga[mu].Ga[nu] - Ga[nu].Ga[mu]);
+
+
+Leea = ee* ebar.Ga[mu].e*A[mu];
+
+Lppa1= -f1*ee* pbar.Ga[mu].p*A[mu];
+
+Lppa2 = f2*ee*1/(2mp)* pbar.sigma[mu,nu].p *del[A[mu],nu];
+
+Lppax = gaxpp* pbar.Ga[mu].Ga[5].p*del[ax,mu];
+
+Laxaa = gaxaa* Eps[mu, nu, lambda, kappa] FA[mu,nu] *FA[lambda,kappa] *ax;
+
+Lpprho1 = -grhopp1 * pbar.Ga[mu].p *rho[mu];
+
+Lpprho2 = grhopp2/2 * pbar.sigma[mu, nu].p *del[rho[mu],nu];
+
+Lrhoaxa = 1/4* ee* grhoaxa * Eps[mu, nu, lambda, kappa]*Frho[mu,nu]*FA[lambda,kappa] *ax;
+
+Lppomega = -gomegapp* pbar. Ga[mu].p*omega[mu];
+
+Lomegaaxa = 1/4* ee*gomegaaxa * Eps[mu, nu, lambda, kappa]*Fomega[mu,nu]*FA[lambda,kappa] *ax;
+
+
+Lag = Leea + Lppa1 + Lppa2 + Lppax + Laxaa + Lpprho1 + Lpprho2 + Lrhoaxa + Lppomega + Lomegaaxa; 
+
+
+
+M$Lagrangians = {Lag};
+
+(* End of model *)
